@@ -13,6 +13,6 @@ axios
   .get(url)
   .then((res) => {
     redis.set(`todo-redis`, JSON.stringify(res.data), "EX", 60 * 60);
-    console.log("done");
+    process.exit();
   })
   .catch((err) => console.log(err));
