@@ -7,23 +7,26 @@ const redisConfig = {
 
 const redis = new Redis(redisConfig);
 
-const getAllJobs = async (req, res) => {
-  const { location } = req.query;
-  let page = req.query.page == null ? 0 : req.query.page - 1;
-
-  let returnData = "";
+const getAllTodo = async (req, res) => {
   try {
-    redis.get("naukari-cache", (err, rawData) => {
+    redis.get("todo-redis", (err, rawData) => {
       if (rawData) {
         const result = JSON.parse(rawData);
-        if (location) {
-          returnData = Object.values(result).filter((item) =>
-            item.placeholders[2].label.includes(location)
-          );
-        } else {
-          returnData = result;
-        }
-        res.status(StatusCodes.OK).send(returnData.slice(10 * page, 10));
+        res.status(StatusCodes.OK).send(result);
+      }
+    });
+  } catch (err) {
+    res.status(StatusCodes.INTERNAL_SERVER_ERROR).send({ error: err.message });
+  }
+};
+
+const getSingleTodo = async (req, res) => {
+  try {
+    redis.get("todo-redis", (err, rawData) => {
+      if (rawData) {
+        const result = JSON.parse(rawData);
+        const data = result.filter((item) => item.id == req.params.id);
+        res.status(StatusCodes.OK).send(data);
       }
     });
   } catch (err) {
@@ -32,5 +35,6 @@ const getAllJobs = async (req, res) => {
 };
 
 module.exports = {
-  getAllJobs,
+  getAllTodo,
+  getSingleTodo,
 };

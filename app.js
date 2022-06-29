@@ -2,10 +2,10 @@ require("dotenv").config();
 const express = require("express");
 const app = express();
 
-const jobRoute = require("./routes/jobs");
+const todoRoute = require("./routes/todos");
 app.use(express.json());
 
-app.use("/nodejobs", jobRoute);
+app.use("/api/todo", todoRoute);
 
 const port = process.env.PORT || 3000;
 
